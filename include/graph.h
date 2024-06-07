@@ -16,7 +16,7 @@ namespace graph {
 			_data = std::unordered_map<Vertex, std::vector<std::pair<Vertex, Distance>>>();
 		}
 		bool has_vertex(const Vertex& v) const {
-			return _data.find(v) != _data.end();
+			return _data.find(v)!=_data.end();
 		}
 		void add_vertex(const Vertex& v) {
 			_data.insert(std::make_pair(v, std::vector<std::pair<Vertex, Distance>>()));
@@ -25,7 +25,7 @@ namespace graph {
 			if (!has_vertex(v)) return false;
 			for (size_t i = 0; i < _data.size(); ++i)
 			{
-				if (i == v) continue;
+				if (i == v) _data.erase(v);
 				int j = 0;
 				auto it = _data[i].begin();
 				while (it != _data[i].end()) {
@@ -39,7 +39,6 @@ namespace graph {
 					}
 				}
 			}
-			_data.erase(v);
 			return true;
 		}
 		void print() const {
@@ -83,10 +82,17 @@ namespace graph {
 		}
 		bool remove_edge(const Vertex& from, const Vertex& to, const Distance& d) {
 			if (!has_vertex(from) || !has_vertex(to)) return false;
-			auto it = _data[from].begin();
-			while (it != _data[from].end() && it->first != to && it->second != d) ++it;
-			if (it == _data[from].end()) return false;
-			_data[from].erase(it);
+			auto& edges = _data[from];
+			bool removed = false;
+			for (auto it = edges.begin(); it != edges.end(); ) {
+				if (it->first == to && it->second == d) {
+					it = edges.erase(it);
+					removed = true;
+				}
+				else {
+					++it;
+				}
+			}
 			return true;
 		}
 		bool has_edge(const Vertex& from, const Vertex& to) const {
@@ -99,7 +105,7 @@ namespace graph {
 		bool has_edge(const Vertex& from, const Vertex& to, const Distance& d) const {
 			if (!has_vertex(from) || !has_vertex(to)) return false;
 			auto it = _data.at(from).begin();
-			while (it != _data.at(from).end() && !(it->first == to && it->second == d)) ++it;
+			while (it != _data.at(from).end() && !(it->first == to && std::abs(it->second-d)<=10e-6)) ++it;
 			return it != _data.at(from).end();
 		}
 		std::vector<std::pair<Vertex, Distance>> edges(const Vertex& v) const {

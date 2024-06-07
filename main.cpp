@@ -11,10 +11,19 @@ int main() {
     }
 
     g.add_edge(6, 1, 7);
+    g.add_edge(6, 1, 7);
     g.add_edge(6, 2, 8);
     g.add_edge(6, 3, 9);
-    g.add_edge(6, 4, 10);
-    g.add_edge(6, 5, 11);
+    g.add_edge(5, 1, 4);
+    g.add_edge(5, 2, 3);
+    g.add_edge(5, 3, 2);
+
+    g.print();
+
+    g.remove_edge(6, 1, 7);
+    
+
+    g.print();
     
      
     int best_location = g.find_warehouse();
